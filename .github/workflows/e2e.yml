@@ -1,0 +1,39 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Producao muda sem PR (deploy, CDN, DNS). Roda todo dia as 09:00 BRT.
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Rodar a suite
+        run: npx playwright test
+        env:
+          BASE_URL: ${{ vars.BASE_URL || 'https://presenteiapp.com.br' }}
+
+      - name: Publicar relatorio
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
