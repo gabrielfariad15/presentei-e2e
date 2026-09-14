@@ -1,3 +1,5 @@
+![E2E](https://github.com/gabrielfariad15/presentei-e2e/actions/workflows/e2e.yml/badge.svg)
+
 # presentei-e2e
 
 Suíte de testes end-to-end e de regressão do [Presentei](https://presenteiapp.com.br),
